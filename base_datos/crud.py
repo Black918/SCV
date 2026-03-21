@@ -1,93 +1,62 @@
-import sqlite3
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from database import get_db
 from datetime import datetime
 
-def conectar():
-    return sqlite3.connect("almacen.db")
+db = get_db()
 
 def crear_tablas():
-    conn = conectar()
-    cursor = conn.cursor()
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS productos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nombre TEXT NOT NULL,
-            marca TEXT,
-            precio REAL,
-            sku TEXT,
-            cantidad INTEGER DEFAULT 0
-        )
-    ''')
-    
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS movimientos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            producto_id INTEGER,
-            cantidad INTEGER,
-            tipo TEXT,
-            fecha TEXT,
-            FOREIGN KEY (producto_id) REFERENCES productos(id)
-        )
-    ''')
-    
-    conn.commit()
-    conn.close()
-    print("Base de datos ready")
+    # En MongoDB no se necesitan crear tablas
+    print("Base de datos MongoDB lista ✅")
 
 def agregar_producto(nombre, marca, precio, sku, cantidad=0):
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO productos (nombre, marca, precio, sku, cantidad)
-        VALUES (?, ?, ?, ?, ?)
-    ''', (nombre, marca, precio, sku, cantidad))
-    conn.commit()
-    conn.close()
+    db.productos.insert_one({
+        "nombre": nombre,
+        "marca": marca,
+        "precio": precio,
+        "sku": sku,
+        "cantidad": cantidad
+    })
     print(f"Producto '{nombre}' agregado")
 
 def consultar_producto(nombre):
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute('''
-        SELECT * FROM productos WHERE nombre LIKE ?
-    ''', (f'%{nombre}%',))
-    productos = cursor.fetchall()
-    conn.close()
+    productos = list(db.productos.find(
+        {"nombre": {"$regex": nombre, "$options": "i"}},
+        {"_id": 0}
+    ))
     return productos
 
 def actualizar_cantidad(nombre, cantidad, tipo):
-    conn = conectar()
-    cursor = conn.cursor()
-    
-    cursor.execute('SELECT id, cantidad FROM productos WHERE nombre LIKE ?', (f'%{nombre}%',))
-    producto = cursor.fetchone()
-    
+    producto = db.productos.find_one(
+        {"nombre": {"$regex": nombre, "$options": "i"}}
+    )
     if producto:
         if tipo == "entrada":
-            nueva_cantidad = producto[1] + cantidad
+            nueva_cantidad = producto["cantidad"] + cantidad
         else:
-            nueva_cantidad = producto[1] - cantidad
-            
-        cursor.execute('UPDATE productos SET cantidad = ? WHERE id = ?', (nueva_cantidad, producto[0]))
-        
-        cursor.execute('''
-            INSERT INTO movimientos (producto_id, cantidad, tipo, fecha)
-            VALUES (?, ?, ?, ?)
-        ''', (producto[0], cantidad, tipo, datetime.now().strftime("%d/%m/%Y %H:%M")))
-        
-        conn.commit()
+            nueva_cantidad = producto["cantidad"] - cantidad
+
+        db.productos.update_one(
+            {"_id": producto["_id"]},
+            {"$set": {"cantidad": nueva_cantidad}}
+        )
+
+        db.movimientos.insert_one({
+            "producto_id": str(producto["_id"]),
+            "nombre": producto["nombre"],
+            "cantidad": cantidad,
+            "tipo": tipo,
+            "fecha": datetime.now().strftime("%d/%m/%Y %H:%M")
+        })
         print(f"Stock actualizado: {nombre} ahora tiene {nueva_cantidad}")
     else:
         print(f"Producto '{nombre}' no encontrado")
-    
-    conn.close()
 
 def eliminar_producto(nombre):
-    conn = conectar()
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM productos WHERE nombre LIKE ?', (f'%{nombre}%',))
-    conn.commit()
-    conn.close()
+    db.productos.delete_one(
+        {"nombre": {"$regex": nombre, "$options": "i"}}
+    )
     print(f"Producto '{nombre}' eliminado")
 
 if __name__ == "__main__":
