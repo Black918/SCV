@@ -1,0 +1,9 @@
+De primera mano debera de instalarse el Flet, que es donde se estará
+haciendo la aplicación 
+En el bash:
+    pip install flet
+Verificación:
+    python -c "import flet as ft; print(ft.__version__)"
+    Ó
+    pip show flet
+Se debera ver algo como 0.24.x o superior.
