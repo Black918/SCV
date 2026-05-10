@@ -38,12 +38,12 @@ def vista_reportes(page: ft.Page):
                             expand=True,
                         ),
                         ft.Chip(
-                            label=ft.Text(v["estado"].upper(), size=11),
+                            # Estilizar el texto directamente en `ft.Text` porque
+                            # `label_style` no es soportado en Flet 0.85.0
+                            label=ft.Text(v["estado"].upper(), size=11,
+                                          color=color_estado(v["estado"])),
                             bgcolor="#0D3B66" if v["estado"] == "abierto"
                                     else "#2A2A3E",
-                            label_style=ft.TextStyle(
-                                color=color_estado(v["estado"])
-                            ),
                         ),
                         ft.IconButton(
                             icon=ft.Icons.PICTURE_AS_PDF,
@@ -95,10 +95,15 @@ def vista_reportes(page: ft.Page):
 
             ft.Container(height=10),
             ft.ElevatedButton(
-                text="Exportar todos los reportes",
-                icon=ft.Icons.DOWNLOAD,
+                # `text` no es soportado en esta versión; usar `content` con `ft.Text`.
+                content=ft.Row(
+                    controls=[
+                        ft.Icon(ft.Icons.DOWNLOAD, color="white"),
+                        ft.Text("Exportar todos los reportes", color="white"),
+                    ],
+                    alignment="center",
+                ),
                 bgcolor="#00B4D8",
-                color="white",
                 style=ft.ButtonStyle(
                     shape=ft.RoundedRectangleBorder(radius=10)
                 ),

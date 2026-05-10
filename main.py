@@ -43,8 +43,9 @@ async def main(page: ft.Page):
             leading=ft.Icon(icono, color="#00B4D8"),
             title=ft.Text(texto, color="white", size=14),
             hover_color="#1E1E2E",
-            # Usamos run_task porque 'navegar' es una función async
-            on_click=lambda e: page.run_task(navegar, vista_fn),
+            # Usamos run_task porque 'navegar' es una función async.
+            # Pasamos también el evento `e` por si la vista lo necesita.
+            on_click=lambda e, fn=vista_fn: page.run_task(navegar, fn, e),
         )
 
     # ── Drawer (Menú Lateral) ────────────────────────────────────────
@@ -84,7 +85,11 @@ async def main(page: ft.Page):
 
     # ── Función para abrir el menú ───────────────────────────────────
     async def abrir_menu(e):
-        page.drawer.open = True
+        # Mostrar el drawer de forma correcta usando la API async de Flet
+        # (esto abre el menú desplegable en la esquina superior izquierda)
+        await page.show_drawer()
+        # No es estrictamente necesario llamar a page.update() después
+        # de show_drawer(), pero lo dejamos para forzar refresco si hace falta.
         page.update()
 
     # ── AppBar (Barra Superior) ──────────────────────────────────────
@@ -116,4 +121,16 @@ async def main(page: ft.Page):
 
 # Ejecución de la aplicación
 if __name__ == "__main__":
-    ft.run(main)
+    # Intentar abrir en navegador si la constante está disponible en esta
+    # instalación de Flet; si no, probar con el identificador string y
+    # finalmente volver a `ft.run(main)` como fallback.
+    try:
+        # Opción preferida (si la constante existe)
+        ft.app(target=main, view=ft.WEB_BROWSER)
+    except Exception:
+        try:
+            # Algunas instalaciones aceptan el identificador string
+            ft.app(target=main, view="web_browser")
+        except Exception:
+            # Último recurso: abrir como app de escritorio
+            ft.run(main)

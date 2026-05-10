@@ -132,7 +132,8 @@ def vista_voz(page: ft.Page):
             # Botón inferior
             ft.Container(
                 content=ft.Row([btn_simular], alignment="center"),
-                padding=ft.padding.only(top=10, bottom=20)
+                # `ft.padding.only` no existe en Flet 0.85.0 — usar `ft.Padding`
+                padding=ft.Padding(top=10, bottom=20)
             ),
         ],
         spacing=10,
