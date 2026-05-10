@@ -40,6 +40,25 @@ def vista_escaneo(page: ft.Page):
             campo_sku.value = ""
             page.update()
 
+    # --- BOTÓN CORREGIDO (Sin el argumento 'text' para evitar errores) ---
+    btn_cerrar = ft.ElevatedButton(
+        content=ft.Row(
+            controls=[
+                ft.Icon(ft.Icons.PICTURE_AS_PDF, size=20),
+                ft.Text("Cerrar Vuelo y Generar Reporte", size=14, weight=ft.FontWeight.BOLD),
+            ],
+            alignment=ft.MainAxisAlignment.CENTER,
+            tight=True,
+        ),
+        bgcolor="#00B4D8",
+        color="white",
+        width=400,
+        height=45,
+        style=ft.ButtonStyle(
+            shape=ft.RoundedRectangleBorder(radius=10),
+        ),
+    )
+
     return ft.Column(
         controls=[
             ft.Container(height=10),
@@ -112,15 +131,11 @@ def vista_escaneo(page: ft.Page):
                 content=productos_escaneados,
             ),
 
-            ft.ElevatedButton(
-                text="Cerrar Vuelo y Generar Reporte",
-                icon=ft.Icons.PICTURE_AS_PDF,
-                bgcolor="#00B4D8",
-                color="white",
-                style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10)),
-                width=float("inf"),
+            # Área del botón inferior
+            ft.Container(
+                content=ft.Row([btn_cerrar], alignment=ft.MainAxisAlignment.CENTER),
+                padding=ft.Padding(top=10, bottom=20, left=0, right=0)
             ),
-            ft.Container(height=10),
         ],
         spacing=10,
         expand=True,

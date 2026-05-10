@@ -1,7 +1,15 @@
 import flet as ft
 
-def vista_inicio(page: ft.Page):
+# Agregamos 'on_navigate' para recibir la función de navegación desde el main
+def vista_inicio(page: ft.Page, on_navigate=None):
+
+    def navigate_to(vista_fn):
+        if on_navigate:
+            # Ejecutamos la función de navegación que viene del main
+            page.run_task(on_navigate, vista_fn)
+
     return ft.Column(
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         controls=[
             ft.Container(height=20),
             ft.Row(
@@ -39,9 +47,16 @@ def vista_inicio(page: ft.Page):
                 wrap=True,
                 alignment=ft.MainAxisAlignment.CENTER,
                 controls=[
-                    _tarjeta("📷", "Escaneo", "Lee códigos de barras en tiempo real"),
-                    _tarjeta("🎙️", "Voz", "Dicta productos con comandos de voz"),
-                    _tarjeta("📄", "Reportes", "Genera PDFs del resumen del vuelo"),
+                    # Importamos las vistas necesarias dentro de las lambdas para evitar ciclos
+                    _tarjeta("📷", "Escaneo", "Lee códigos de barras en tiempo real", 
+                             on_click=lambda _: navigate_to(__import__('pantallas.escaneo', fromlist=['vista_escaneo']).vista_escaneo)),
+                    
+                    _tarjeta("🎙️", "Voz", "Dicta productos con comandos de voz",
+                             on_click=lambda _: navigate_to(__import__('pantallas.voz_pantalla', fromlist=['vista_voz']).vista_voz)),
+                    
+                    _tarjeta("📄", "Reportes", "Genera PDFs del resumen del vuelo",
+                             on_click=lambda _: navigate_to(__import__('pantallas.reportes', fromlist=['vista_reportes']).vista_reportes)),
+                    
                     _tarjeta("✈️", "Vuelos", "Gestiona sesiones de vuelo abiertas"),
                 ],
             ),
@@ -66,13 +81,15 @@ def vista_inicio(page: ft.Page):
         expand=True,
     )
 
-def _tarjeta(icono, titulo, descripcion):
+def _tarjeta(icono, titulo, descripcion, on_click=None):
     return ft.Container(
         width=160,
         height=110,
         padding=ft.Padding(left=14, top=14, right=14, bottom=14),
         border_radius=12,
         bgcolor="#1E1E2E",
+        ink=True, # Efecto visual de clic
+        on_click=on_click,
         border=ft.Border(
             left=ft.BorderSide(width=1, color="#00B4D8"),
             top=ft.BorderSide(width=1, color="#00B4D8"),
