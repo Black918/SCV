@@ -134,3 +134,4 @@ if __name__ == "__main__":
         except Exception:
             # Último recurso: abrir como app de escritorio
             ft.run(main)
+#aqui un cambio
