@@ -1,4 +1,5 @@
 import flet as ft
+import config_colors as theme
 
 def vista_reportes(page: ft.Page):
 
@@ -9,7 +10,7 @@ def vista_reportes(page: ft.Page):
     ]
 
     def color_estado(estado):
-        return "#00B4D8" if estado == "abierto" else "#AAAAAA"
+        return theme.c("ACCENT") if estado == "abierto" else theme.c("MUTED")
 
     tarjetas = []
     for v in vuelos_mock:
@@ -17,7 +18,7 @@ def vista_reportes(page: ft.Page):
             ft.Container(
                 padding=ft.Padding(left=14, top=14, right=14, bottom=14),
                 border_radius=10,
-                bgcolor="#1E1E2E",
+                bgcolor=theme.c("CARD_BG"),
                 border=ft.Border(
                     left=ft.BorderSide(width=1, color=color_estado(v["estado"])),
                     top=ft.BorderSide(width=1, color=color_estado(v["estado"])),
@@ -29,10 +30,10 @@ def vista_reportes(page: ft.Page):
                         ft.Icon(ft.Icons.FLIGHT, color=color_estado(v["estado"])),
                         ft.Column(
                             controls=[
-                                ft.Text(f"Vuelo {v['numero']}",
-                                        color="white",
-                                        weight=ft.FontWeight.BOLD, size=14),
-                                ft.Text(v["fecha"], color="#AAAAAA", size=12),
+                            ft.Text(f"Vuelo {v['numero']}",
+                                color=theme.c("TEXT_MAIN"),
+                                weight=ft.FontWeight.BOLD, size=14),
+                            ft.Text(v["fecha"], color=theme.c("MUTED"), size=12),
                             ],
                             spacing=2,
                             expand=True,
@@ -42,12 +43,12 @@ def vista_reportes(page: ft.Page):
                             # `label_style` no es soportado en Flet 0.85.0
                             label=ft.Text(v["estado"].upper(), size=11,
                                           color=color_estado(v["estado"])),
-                            bgcolor="#0D3B66" if v["estado"] == "abierto"
-                                    else "#2A2A3E",
+                                bgcolor=theme.c("BUTTON_BG") if v["estado"] == "abierto"
+                                    else theme.c("CARD_BORDER"),
                         ),
                         ft.IconButton(
                             icon=ft.Icons.PICTURE_AS_PDF,
-                            icon_color="#00B4D8",
+                                icon_color=theme.c("ACCENT"),
                             tooltip="Generar PDF",
                         ),
                     ],
@@ -60,31 +61,31 @@ def vista_reportes(page: ft.Page):
     return ft.Column(
         controls=[
             ft.Container(height=10),
-            ft.Text("Reportes de Vuelos", size=20,
-                    weight=ft.FontWeight.BOLD, color="white"),
-            ft.Divider(color="#00B4D8", thickness=1),
+                ft.Text("Reportes de Vuelos", size=20,
+                    weight=ft.FontWeight.BOLD, color=theme.c("TEXT_MAIN")),
+                ft.Divider(color=theme.c("ACCENT"), thickness=1),
 
             ft.Row(
                 controls=[
                     ft.TextField(
                         label="Buscar vuelo",
                         hint_text="Ej. AM452",
-                        bgcolor="#1E1E2E",
-                        border_color="#00B4D8",
-                        color="white",
+                        bgcolor=theme.c("CARD_BG"),
+                        border_color=theme.c("ACCENT"),
+                        color=theme.c("TEXT_MAIN"),
                         prefix_icon=ft.Icons.SEARCH,
                         expand=True,
                     ),
                     ft.IconButton(
                         icon=ft.Icons.FILTER_LIST,
-                        icon_color="#00B4D8",
+                        icon_color=theme.c("ACCENT"),
                         tooltip="Filtrar",
                     ),
                 ]
             ),
 
             ft.Container(height=6),
-            ft.Text("Vuelos registrados:", size=13, color="#AAAAAA"),
+            ft.Text("Vuelos registrados:", size=13, color=theme.c("MUTED")),
 
             ft.Column(
                 controls=tarjetas,
@@ -98,12 +99,12 @@ def vista_reportes(page: ft.Page):
                 # `text` no es soportado en esta versión; usar `content` con `ft.Text`.
                 content=ft.Row(
                     controls=[
-                        ft.Icon(ft.Icons.DOWNLOAD, color="white"),
-                        ft.Text("Exportar todos los reportes", color="white"),
+                        ft.Icon(ft.Icons.DOWNLOAD, color=theme.c("BUTTON_TEXT")),
+                        ft.Text("Exportar todos los reportes", color=theme.c("BUTTON_TEXT")),
                     ],
                     alignment="center",
                 ),
-                bgcolor="#00B4D8",
+                bgcolor=theme.c("BUTTON_BG"),
                 style=ft.ButtonStyle(
                     shape=ft.RoundedRectangleBorder(radius=10)
                 ),

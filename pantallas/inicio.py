@@ -1,4 +1,5 @@
 import flet as ft
+import config_colors as theme
 
 # Agregamos 'on_navigate' para recibir la función de navegación desde el main
 def vista_inicio(page: ft.Page, on_navigate=None):
@@ -14,29 +15,29 @@ def vista_inicio(page: ft.Page, on_navigate=None):
             ft.Container(height=20),
             ft.Row(
                 controls=[
-                    ft.Icon(ft.Icons.FLIGHT_TAKEOFF, size=40, color="#00B4D8"),
-                    ft.Text("SCV — Sistema de Control de Vuelos",
-                            size=22, weight=ft.FontWeight.BOLD, color="white"),
+                        ft.Icon(ft.Icons.FLIGHT_TAKEOFF, size=40, color=theme.c("ACCENT")),
+                        ft.Text("SCV — Sistema de Control de Vuelos",
+                            size=22, weight=ft.FontWeight.BOLD, color=theme.c("TEXT_MAIN")),
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
             ),
-            ft.Divider(color="#00B4D8", thickness=1),
+            ft.Divider(color=theme.c("ACCENT"), thickness=1),
             ft.Container(height=10),
 
             ft.Container(
                 padding=ft.Padding(left=20, top=20, right=20, bottom=20),
                 border_radius=12,
-                bgcolor="#1E1E2E",
+                bgcolor=theme.c("CARD_BG"),
                 content=ft.Column(
                     controls=[
                         ft.Text("¿Qué es Kalan?",
-                                size=18, weight=ft.FontWeight.BOLD, color="#00B4D8"),
+                                size=18, weight=ft.FontWeight.BOLD, color=theme.c("TITLE")),
                         ft.Container(height=8),
                         ft.Text(
                             "Aplicación multiplataforma para el personal de catering aéreo. "
                             "Permite contar productos por vuelo usando voz y cámara, "
                             "eliminando errores manuales y generando reportes automáticos.",
-                            size=14, color="#CCCCCC",
+                            size=14, color=theme.c("TEXT_MAIN"),
                         ),
                     ]
                 )
@@ -65,12 +66,12 @@ def vista_inicio(page: ft.Page, on_navigate=None):
             ft.Container(
                 padding=ft.Padding(left=20, top=12, right=20, bottom=12),
                 border_radius=10,
-                bgcolor="#0D3B66",
+                bgcolor=theme.c("BUTTON_BG"),
                 content=ft.Row(
                     controls=[
-                        ft.Icon(ft.Icons.INFO_OUTLINE, color="#00B4D8"),
+                        ft.Icon(ft.Icons.INFO_OUTLINE, color=theme.c("ACCENT")),
                         ft.Text("Versión 1.0  ·  Kalan Project",
-                                size=12, color="#AAAAAA"),
+                                size=12, color=theme.c("MUTED")),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                 )
@@ -87,21 +88,21 @@ def _tarjeta(icono, titulo, descripcion, on_click=None):
         height=110,
         padding=ft.Padding(left=14, top=14, right=14, bottom=14),
         border_radius=12,
-        bgcolor="#1E1E2E",
+        bgcolor=theme.c("CARD_BG"),
         ink=True, # Efecto visual de clic
         on_click=on_click,
         border=ft.Border(
-            left=ft.BorderSide(width=1, color="#00B4D8"),
-            top=ft.BorderSide(width=1, color="#00B4D8"),
-            right=ft.BorderSide(width=1, color="#00B4D8"),
-            bottom=ft.BorderSide(width=1, color="#00B4D8"),
+            left=ft.BorderSide(width=1, color=theme.c("CARD_BORDER")),
+            top=ft.BorderSide(width=1, color=theme.c("CARD_BORDER")),
+            right=ft.BorderSide(width=1, color=theme.c("CARD_BORDER")),
+            bottom=ft.BorderSide(width=1, color=theme.c("CARD_BORDER")),
         ),
         content=ft.Column(
             controls=[
                 ft.Text(icono, size=26),
                 ft.Text(titulo, size=13,
-                        weight=ft.FontWeight.BOLD, color="white"),
-                ft.Text(descripcion, size=11, color="#AAAAAA"),
+                        weight=ft.FontWeight.BOLD, color=theme.c("TEXT_MAIN")),
+                ft.Text(descripcion, size=11, color=theme.c("MUTED")),
             ],
             spacing=4,
         ),

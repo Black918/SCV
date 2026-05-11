@@ -1,7 +1,8 @@
 import flet as ft
+import config_colors as theme
 
 def vista_escaneo(page: ft.Page):
-    vuelo_actual = ft.Text("Sin vuelo activo", size=13, color="#AAAAAA")
+    vuelo_actual = ft.Text("Sin vuelo activo", size=13, color=theme.c("MUTED"))
 
     productos_escaneados = ft.ListView(
         expand=True,
@@ -12,10 +13,10 @@ def vista_escaneo(page: ft.Page):
     campo_sku = ft.TextField(
         label="SKU / Código de barras",
         hint_text="Escanea o escribe el código",
-        bgcolor="#1E1E2E",
-        border_color="#00B4D8",
-        focused_border_color="#90E0EF",
-        color="white",
+        bgcolor=theme.c("CARD_BG"),
+        border_color=theme.c("ACCENT"),
+        focused_border_color=theme.c("ACCENT"),
+        color=theme.c("TEXT_MAIN"),
         prefix_icon=ft.Icons.QR_CODE_SCANNER,
         expand=True,
     )
@@ -26,13 +27,13 @@ def vista_escaneo(page: ft.Page):
                 ft.Container(
                     padding=ft.Padding(left=14, top=10, right=14, bottom=10),
                     border_radius=8,
-                    bgcolor="#1E1E2E",
+                    bgcolor=theme.c("CARD_BG"),
                     content=ft.Row(
                         controls=[
-                            ft.Icon(ft.Icons.CHECK_CIRCLE, color="#00B4D8", size=18),
+                            ft.Icon(ft.Icons.CHECK_CIRCLE, color=theme.c("ACCENT"), size=18),
                             ft.Text(campo_sku.value.strip(),
-                                    color="white", size=14, expand=True),
-                            ft.Text("x1", color="#AAAAAA", size=13),
+                                    color=theme.c("TEXT_MAIN"), size=14, expand=True),
+                            ft.Text("x1", color=theme.c("MUTED"), size=13),
                         ]
                     )
                 )
@@ -50,8 +51,8 @@ def vista_escaneo(page: ft.Page):
             alignment=ft.MainAxisAlignment.CENTER,
             tight=True,
         ),
-        bgcolor="#00B4D8",
-        color="white",
+        bgcolor=theme.c("BUTTON_BG"),
+        color=theme.c("BUTTON_TEXT"),
         width=400,
         height=45,
         style=ft.ButtonStyle(
@@ -62,19 +63,19 @@ def vista_escaneo(page: ft.Page):
     return ft.Column(
         controls=[
             ft.Container(height=10),
-            ft.Text("Escaneo de Productos", size=20,
-                    weight=ft.FontWeight.BOLD, color="white"),
-            ft.Divider(color="#00B4D8", thickness=1),
+                ft.Text("Escaneo de Productos", size=20,
+                    weight=ft.FontWeight.BOLD, color=theme.c("TEXT_MAIN")),
+                ft.Divider(color=theme.c("ACCENT"), thickness=1),
 
             # Vuelo activo
             ft.Container(
                 padding=ft.Padding(left=16, top=10, right=16, bottom=10),
                 border_radius=10,
-                bgcolor="#0D3B66",
+                bgcolor=theme.c("BUTTON_BG"),
                 content=ft.Row(
                     controls=[
-                        ft.Icon(ft.Icons.FLIGHT, color="#00B4D8"),
-                        ft.Text("Vuelo activo: ", color="#AAAAAA", size=13),
+                        ft.Icon(ft.Icons.FLIGHT, color=theme.c("ACCENT")),
+                        ft.Text("Vuelo activo: ", color=theme.c("MUTED"), size=13),
                         vuelo_actual,
                     ]
                 )
@@ -86,19 +87,19 @@ def vista_escaneo(page: ft.Page):
             ft.Container(
                 height=180,
                 border_radius=12,
-                bgcolor="#12121F",
+                bgcolor=theme.c("CARD_BG"),
                 border=ft.Border(
-                    left=ft.BorderSide(width=2, color="#00B4D8"),
-                    top=ft.BorderSide(width=2, color="#00B4D8"),
-                    right=ft.BorderSide(width=2, color="#00B4D8"),
-                    bottom=ft.BorderSide(width=2, color="#00B4D8"),
+                    left=ft.BorderSide(width=2, color=theme.c("CARD_BORDER")),
+                    top=ft.BorderSide(width=2, color=theme.c("CARD_BORDER")),
+                    right=ft.BorderSide(width=2, color=theme.c("CARD_BORDER")),
+                    bottom=ft.BorderSide(width=2, color=theme.c("CARD_BORDER")),
                 ),
                 content=ft.Column(
                     controls=[
                         ft.Icon(ft.Icons.CAMERA_ALT_OUTLINED,
-                                size=50, color="#00B4D850"),
+                                size=50, color=theme.c("ACCENT")+"50" if theme.c("ACCENT") else None),
                         ft.Text("Cámara — próximamente",
-                                color="#555577", size=13),
+                                color=theme.c("MUTED"), size=13),
                     ],
                     alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -113,7 +114,7 @@ def vista_escaneo(page: ft.Page):
                     campo_sku,
                     ft.IconButton(
                         icon=ft.Icons.ADD_CIRCLE,
-                        icon_color="#00B4D8",
+                        icon_color=theme.c("ACCENT"),
                         icon_size=32,
                         tooltip="Agregar producto",
                         on_click=agregar_mock,
@@ -121,12 +122,12 @@ def vista_escaneo(page: ft.Page):
                 ]
             ),
 
-            ft.Text("Productos escaneados:", size=13, color="#AAAAAA"),
+            ft.Text("Productos escaneados:", size=13, color=theme.c("MUTED")),
 
             ft.Container(
                 expand=True,
                 border_radius=10,
-                bgcolor="#12121F",
+                bgcolor=theme.c("CARD_BG"),
                 padding=ft.Padding(left=6, top=6, right=6, bottom=6),
                 content=productos_escaneados,
             ),
