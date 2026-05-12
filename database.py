@@ -9,3 +9,9 @@ db = client[os.getenv("MONGO_DB")]
 
 def get_db():
     return db
+
+def get_productos():
+    return db["productos"]
+
+def get_vuelos():
+    return db["Vuelos"]

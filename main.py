@@ -89,7 +89,7 @@ async def main(page: ft.Page):
     async def abrir_menu(e):
         # Mostrar el drawer de forma correcta usando la API async de Flet
         # (esto abre el menú desplegable en la esquina superior izquierda)
-        await page.show_drawer()
+        await page.show_drawer(drawer)
         # No es estrictamente necesario llamar a page.update() después
         # de show_drawer(), pero lo dejamos para forzar refresco si hace falta.
         page.update()
