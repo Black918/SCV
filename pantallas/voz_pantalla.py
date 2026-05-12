@@ -1,5 +1,14 @@
 import flet as ft
 import config_colors as theme
+import datetime
+
+# Intentar usar el listener Vosk; si falla, dejarlo manejable desde UI
+try:
+    from voz.listener_vosk import VoskListener, VoskDependencyError
+    VOSK_AVAILABLE = True
+except Exception as _e:
+    VOSK_AVAILABLE = False
+    VOSK_ERROR = str(_e)
 
 
 def vista_voz(page: ft.Page):
@@ -10,6 +19,7 @@ def vista_voz(page: ft.Page):
     historial = ft.ListView(expand=True, spacing=8, padding=8)
 
     escuchando = {"activo": False}
+    listener = {"obj": None}
 
     def toggle_mic(e):
         escuchando["activo"] = not escuchando["activo"]
@@ -19,12 +29,30 @@ def vista_voz(page: ft.Page):
             btn_mic.icon = ft.Icons.MIC
             btn_mic.icon_color = "#FF6B6B"
             texto_reconocido.value = "Di un comando, por ejemplo:\n\"Agregar 10 comidas\""
+            # iniciar listener Vosk
+            if VOSK_AVAILABLE:
+                try:
+                    listener["obj"] = VoskListener(model_path="model", callback=on_recognized)
+                    listener["obj"].start()
+                except VoskDependencyError as ex:
+                    texto_reconocido.value = f"Error Vosk: {ex}"
+                except Exception as ex:
+                    texto_reconocido.value = f"Error al iniciar micrófono: {ex}"
+            else:
+                texto_reconocido.value = "Vosk no disponible. Instala 'vosk' y 'sounddevice' y coloca un modelo en /model"
         else:
             estado_mic.value = "Micrófono inactivo"
             estado_mic.color = theme.c("MUTED")
             btn_mic.icon = ft.Icons.MIC_OFF
             btn_mic.icon_color = theme.c("ACCENT")
             texto_reconocido.value = ""
+            # detener listener
+            try:
+                if listener.get("obj"):
+                    listener["obj"].stop()
+            except Exception:
+                pass
+            listener["obj"] = None
         page.update()
 
     btn_mic = ft.IconButton(
@@ -35,6 +63,10 @@ def vista_voz(page: ft.Page):
     )
 
     def agregar_comando_mock(e):
+        add_historial("agregar 10 comidas", "Agregar")
+
+    def add_historial(texto: str, tipo: str = "Texto"):
+        hora = datetime.datetime.now().strftime("%H:%M:%S")
         historial.controls.insert(
             0,
             ft.Container(
@@ -46,8 +78,8 @@ def vista_voz(page: ft.Page):
                         ft.Icon(ft.Icons.RECORD_VOICE_OVER, color=theme.c("ACCENT"), size=18),
                         ft.Column(
                             controls=[
-                                ft.Text("agregar 10 comidas", color=theme.c("TEXT_MAIN"), size=13),
-                                ft.Text("12:34:05", color=theme.c("MUTED"), size=11),
+                                ft.Text(f"[{tipo}] {texto}", color=theme.c("TEXT_MAIN"), size=13),
+                                ft.Text(hora, color=theme.c("MUTED"), size=11),
                             ],
                             spacing=2,
                         )
@@ -55,7 +87,27 @@ def vista_voz(page: ft.Page):
                 )
             )
         )
-        page.update()
+        try:
+            page.update()
+        except Exception:
+            pass
+
+    def _detectar_tipo_comando(texto: str) -> str:
+        t = texto.lower()
+        if any(k in t for k in ["agregar", "añadir", "anadir", "add"]):
+            return "Agregar"
+        if any(k in t for k in ["modificar", "modifica", "editar", "cambiar", "update"]):
+            return "Modificar"
+        if any(k in t for k in ["eliminar", "borrar", "quitar", "remove", "delete"]):
+            return "Eliminar"
+        if any(k in t for k in ["buscar", "busca", "buscar"]):
+            return "Buscar"
+        return "Texto"
+
+    def on_recognized(texto_rec: str):
+        tipo = _detectar_tipo_comando(texto_rec)
+        texto_reconocido.value = texto_rec
+        add_historial(texto_rec, tipo)
 
     btn_simular = ft.OutlinedButton(
         content=ft.Row(

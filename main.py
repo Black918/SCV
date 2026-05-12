@@ -89,7 +89,7 @@ async def main(page: ft.Page):
     async def abrir_menu(e):
         # Mostrar el drawer de forma correcta usando la API async de Flet
         # (esto abre el menú desplegable en la esquina superior izquierda)
-        await page.show_drawer(drawer)
+        await page.show_drawer()
         # No es estrictamente necesario llamar a page.update() después
         # de show_drawer(), pero lo dejamos para forzar refresco si hace falta.
         page.update()
@@ -127,13 +127,9 @@ if __name__ == "__main__":
     # instalación de Flet; si no, probar con el identificador string y
     # finalmente volver a `ft.run(main)` como fallback.
     try:
-        # Opción preferida (si la constante existe)
-        ft.app(target=main, view=ft.WEB_BROWSER)
+        # Intentar ejecutar en navegador (cadena compatible con distintas versiones)
+        ft.app(target=main, view="web_browser")
     except Exception:
-        try:
-            # Algunas instalaciones aceptan el identificador string
-            ft.app(target=main, view="web_browser")
-        except Exception:
-            # Último recurso: abrir como app de escritorio
-            ft.run(main)
+        # Fallback a modo escritorio para instalaciones antiguas
+        ft.run(main)
 #aqui un cambio
