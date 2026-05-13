@@ -127,9 +127,12 @@ if __name__ == "__main__":
     # instalación de Flet; si no, probar con el identificador string y
     # finalmente volver a `ft.run(main)` como fallback.
     try:
-        # Intentar ejecutar en navegador (cadena compatible con distintas versiones)
-        ft.app(target=main, view="web_browser")
+        # Preferir la API `ft.run` (nueva) cuando esté disponible
+        ft.run(main, view="web_browser", port=8550)
     except Exception:
-        # Fallback a modo escritorio para instalaciones antiguas
-        ft.run(main)
+        # Fallback a `ft.app` para instalaciones antiguas
+        try:
+            ft.app(target=main, view="web_browser", port=8550)
+        except Exception:
+            ft.run(main)
 #aqui un cambio
